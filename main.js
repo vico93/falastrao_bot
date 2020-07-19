@@ -1,5 +1,5 @@
-/**
-  *	FALASTRÃO BOT
+ï»¿/**
+  *	FALASTRÃƒO BOT
   * by VICO
   *
   */
@@ -17,40 +17,47 @@ const config = toml.parse(fs.readFileSync('./config.toml', 'utf-8'));
 const bot = new discord_api.Client();
 
 /* Objeto principal do Markov Chain */
-var chain_principal = markov();				// Objeto de ordem 2
+var chain_principal = markov(1);				// Objeto de ordem 1
 
-/* FUNÇÕES ÚTEIS */
-// Função de gerar número aleatório
+/* FUNÃ‡Ã•ES ÃšTEIS */
+// FunÃ§Ã£o de gerar nÃºmero aleatÃ³rio
 function gerar_aleatorio(min, max) {
 	return Math.floor(Math.random() * (max - min) ) + min;
 }
-// Remove mentions e etc de uma string
-function tratar_mensagem(msg) {
+// Remove mentions da mensagem
+function remover_mentions(msg) {
 	return msg.replace(/<@(.*?)>/, ""); // Remove QUALQUER mention
 }
 
-/* "INSEMINAÇÃO" DA CADEIA */
-// LÊ o arquivo-fonte, e alimenta cada linha no objeto da cadeia
+// Remove a quote de uma resposta (para uma rÃ©plica)
+function remover_quote(msg) {
+	return msg.replace(/>(.*?)\n</, "<"); // Remove tudo o que comeÃ§a com '>', quebra a linha e vai comeÃ§ar com uma mention
+}
+
+/* "INSEMINAÃ‡ÃƒO" DA CADEIA */
+// LÃŠ o arquivo-fonte, e alimenta cada linha no objeto da cadeia
 fs.readFileSync(__dirname + '/frases.txt').toString().split("\n").forEach(function(line, index, arr) {
 	if (index === arr.length - 1 && line === "") { return; }
 	chain_principal.seed(line);
 });
 
 /* EVENTOS */
-// Evento que é executado quando o script é iniciado
+// Evento que Ã© executado quando o script Ã© iniciado
 bot.once('ready', () => {
 	console.log('[INFO] Bot iniciado!');
 });
 
-// Quando alguém manda uma mensagem
-client.on('message', message => {
-	// Caso seja pingado E caso não tenha sido ele mesmo que se mencionou
+// Quando alguÃ©m manda uma mensagem
+bot.on('message', message => {
+	// DEBUG
+	// console.log(message.content);
+	// Caso seja pingado E caso nÃ£o tenha sido ele mesmo que se mencionou
 	if ((message.mentions.has(bot.user)) && (message.author !== bot.user)) {
 		// Responde a mensagem (na verdade envia a mensagem quotando a original e citando a mensagem original)
-		message.channel.send('> ' + message.content + '\n' + "<@" + message.author.id + ">" + chain_principal.respond(message.content).join(' '));
+		message.channel.send('> ' + remover_quote(message.content) + '\n' + "<@" + message.author.id + "> " + chain_principal.respond(remover_mentions(remover_quote(message.content))).join(' '));
 	}
 });
 
-/* CONEXÃO */
+/* CONEXÃƒO */
 // Loga no Discord com o token presente na config
 bot.login(config.discord.bot_token);

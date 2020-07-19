@@ -1,0 +1,26 @@
+{
+  "name": "falastrao_bot",
+  "version": "0.0.1",
+  "description": "Bot pro Discord extremamente cru que lê um arquivo de texto com frases de exemplo e tenta falar (usando markov chain) aleatoriamente ou quando mencionado.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vico93/falastrao_bot.git"
+  },
+  "keywords": [],
+  "author": "Vico",
+  "license": "SEE LICENSE IN README.MD",
+  "bugs": {
+    "url": "https://github.com/vico93/falastrao_bot/issues"
+  },
+  "homepage": "https://github.com/vico93/falastrao_bot#readme",
+  "dependencies": {
+    "discord.js": "^12.2.0",
+    "markov": "0.0.7",
+    "toml": "^3.0.0"
+  },
+  "devDependencies": {}
+}
