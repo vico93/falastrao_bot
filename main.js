@@ -24,11 +24,11 @@ var chain_principal = markov(config.markov.markov_order);				// Cadeia com a ord
 function gerar_aleatorio(min, max) {
 	return Math.floor(Math.random() * (max - min) ) + min;
 }
+
 // Remove mentions da mensagem
 function remover_mentions(msg) {
 	return msg.replace(/<@(.*?)>/, ""); // Remove QUALQUER mention
 }
-
 // Remove a quote de uma resposta (para uma réplica)
 function remover_quote(msg) {
 	return msg.replace(/>(.*?)\n</, "<"); // Remove tudo o que começa com '>', quebra a linha e vai começar com uma mention
@@ -36,7 +36,7 @@ function remover_quote(msg) {
 
 /* "INSEMINAÇÃO" DA CADEIA */
 // LÊ o arquivo-fonte, e alimenta cada linha no objeto da cadeia
-fs.readFileSync(__dirname + '/frases.txt').toString().split("\n").forEach(function(line, index, arr) {
+fs.readFileSync(__dirname + '/fonte.txt').toString().split("\n").forEach(function(line, index, arr) {
 	if (index === arr.length - 1 && line === "") { return; }
 	chain_principal.seed(line);
 });
