@@ -17,7 +17,7 @@ const config = toml.parse(fs.readFileSync('./config.toml', 'utf-8'));
 const bot = new discord_api.Client();
 
 /* Objeto principal do Markov Chain */
-var chain_principal = markov(1);				// Objeto de ordem 1
+var chain_principal = markov(config.markov.markov_order);				// Cadeia com a ordem definida pelo usuário (padrão é 2)
 
 /* FUNÇÕES ÚTEIS */
 // Função de gerar número aleatório
@@ -45,14 +45,17 @@ fs.readFileSync(__dirname + '/frases.txt').toString().split("\n").forEach(functi
 // Evento que é executado quando o script é iniciado
 bot.once('ready', () => {
 	console.log('[INFO] Bot iniciado!');
+	console.log('[INFO] Bot usando cadeia de ordem ' + config.markov.markov_order + "!");
 });
 
 // Quando alguém manda uma mensagem
 bot.on('message', message => {
 	// DEBUG
 	// console.log(message.content);
-	// Caso seja pingado E caso não tenha sido ele mesmo que se mencionou
-	if ((message.mentions.has(bot.user)) && (message.author !== bot.user)) {
+	// Caso o autor seja um bot (ele mesmo incluído) não faz nada
+	if(message.author.bot) return;
+	// Caso seja pingado
+	if (message.mentions.has(bot.user)) {
 		// Responde a mensagem (na verdade envia a mensagem quotando a original e citando a mensagem original)
 		message.channel.send('> ' + remover_quote(message.content) + '\n' + "<@" + message.author.id + "> " + chain_principal.respond(remover_mentions(remover_quote(message.content))).join(' '));
 	}

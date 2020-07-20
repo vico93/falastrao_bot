@@ -1,3 +1,4 @@
 [discord]
 bot_token = blablabla
-
+[markov]
+markov_order = 2
