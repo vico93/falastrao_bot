@@ -5,6 +5,7 @@ After=network.target
 [Service]
 Type=simple
 User=usuario
+WorkingDirectory=/path/to
 ExecStart=/usr/bin/node /path/to/main.js
 Restart=on-failure
 
