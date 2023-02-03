@@ -1,0 +1,8 @@
+{
+  "discord": {
+    "bot_token": "INSIRA AQUI"
+  },
+  "markov": {
+    "ordem": 2
+  }
+}

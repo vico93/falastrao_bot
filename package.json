@@ -18,5 +18,9 @@
   "bugs": {
     "url": "https://github.com/vico93/falastrao_bot/issues"
   },
-  "homepage": "https://github.com/vico93/falastrao_bot#readme"
+  "homepage": "https://github.com/vico93/falastrao_bot#readme",
+  "dependencies": {
+    "discord.js": "^14.7.1",
+    "markov": "^0.0.7"
+  }
 }
