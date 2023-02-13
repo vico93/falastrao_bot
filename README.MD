@@ -2,6 +2,6 @@
 
 Bot pro Discord extremamente cru que lê um arquivo de texto com frases de exemplo e tenta falar (usando markov chain) aleatoriamente ou quando mencionado.
 
-Usa [discord.js](https://discord.js.org/) e [makrov](https://www.npmjs.com/package/markov).
+Usa [discord.js](https://discord.js.org/) e [openai](https://www.npmjs.com/package/openai).
 
-Você coloca o arquivo-texto com as frases pré-fabricadas no `fonte.txt` e no `config.json` o token do bot e o seu ID no discord pro bot aprender com suas mensagens.
+Você coloca a sua chave API do OpenAI e o token do bot no discord pro bot falar no seu servidor.
