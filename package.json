@@ -1,7 +1,7 @@
 {
   "name": "falastrao_bot",
-  "version": "0.0.1",
-  "description": "Simples chatbot pro Discord usando markov chain",
+  "version": "1.0.0",
+  "description": "Simples chatbot pro Discord usando GPT",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -21,6 +21,6 @@
   "homepage": "https://github.com/vico93/falastrao_bot#readme",
   "dependencies": {
     "discord.js": "^14.7.1",
-    "markov": "^0.0.7"
+    "openai": "^3.1.0"
   }
 }

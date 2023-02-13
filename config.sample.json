@@ -2,7 +2,7 @@
   "discord": {
     "bot_token": "INSIRA AQUI"
   },
-  "markov": {
-    "ordem": 2
+  "openai": {
+    "api_key": "INSIRA AQUI"
   }
 }
