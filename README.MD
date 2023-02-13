@@ -1,6 +1,6 @@
 # Falastrão BOT
 
-Bot pro Discord extremamente cru que lê um arquivo de texto com frases de exemplo e tenta falar (usando markov chain) aleatoriamente ou quando mencionado.
+Bot pro Discord que utiliza o da vinci do gpt-3 para conversar com o usuário.
 
 Usa [discord.js](https://discord.js.org/) e [openai](https://www.npmjs.com/package/openai).
 
