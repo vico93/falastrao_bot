@@ -29,13 +29,18 @@ const openai = new OpenAIApi(configuration);
 // Função para enviar uma pergunta ao GPT-3 e obter uma resposta
 async function openai_reply(message) {
 	const completion = await openai.createCompletion({
-		model: "text-davinci-003",
-		prompt: message,
-		temperature: 0.7,
-		max_tokens: 256,
-		top_p: 1,
-		frequency_penalty: 0.0,
-		presence_penalty: 0.0,
+		model: "gpt-3.5-turbo",
+		messages: [
+		  {
+			"role": "system",
+			"content": "Você é uma fiel assistente para um grupo de amigos no Discord"
+		  },
+		  {
+			"role": "user",
+			"content": message
+		  }
+		]
+		
 	});
   return completion.data.choices[0].text;
 }
