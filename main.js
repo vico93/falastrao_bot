@@ -24,6 +24,7 @@ const configuration = new Configuration({
 	apiKey: config.openai.api_key,
 });
 const openai = new OpenAIApi(configuration);
+// Armazenará a última resposta do bot para cada usuário (independentemente do canal)
 const last_messages = new Collection();
 
 /* ------------------ FUNÇÕES ------------------ */
