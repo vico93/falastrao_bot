@@ -30,11 +30,7 @@ const openai = new OpenAIApi(configuration);
 async function openai_reply(message) {
 	const completion = await openai.createChatCompletion({
 	  model: "gpt-3.5-turbo",
-	  messages: [{
-            "role": "system",
-            "content": "Você é um assistente virtual chamado Peedy"
-          },
-		  {role: "user", content: message}],
+	  messages: [{role: "user", content: message}],
 	});
 	return completion.data.choices[0].message;
 }
