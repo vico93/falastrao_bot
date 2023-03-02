@@ -39,12 +39,13 @@ async function openai_reply(user_id, username, message) {
 	{
 		last_message = "Esta é a primeira conversa com " + username;
 	}
+	let username_fixed = username.replace(/ /g,"_");
 	const completion = await openai.createChatCompletion({
 	  model: "gpt-3.5-turbo",
 	  messages: [
 		{role: "assistant", content: last_message},
 		{role: "system", content: config.openai.context},
-		{role: "user", name: username, content: message}
+		{role: "user", name: username_fixed, content: message}
 	],
 	});
 	last_messages.set(user_id, completion.data.choices[0].message.content);
