@@ -3,6 +3,7 @@
     "bot_token": "INSIRA AQUI"
   },
   "openai": {
-    "api_key": "INSIRA AQUI"
+    "api_key": "INSIRA AQUI",
+	"context": ""
   }
 }
