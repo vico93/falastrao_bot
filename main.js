@@ -58,8 +58,8 @@ client.on('ready', () => {
 });
 
 client.on('messageCreate', async (msg) => {
-	// Caso o autor seja um bot (ele mesmo incluído) não faz nada
-	if (msg.author.bot) return;
+	// Caso o autor seja um bot (ele mesmo incluído) EXCETO o quebra-gelo não faz nada
+	if (msg.author.bot && msg.author.id !== config.discord.bot_ignore) return;
 	
 	// Caso a mensagem venha por DM (IMPLEMENTAR POSTERIORMENTE ALGUMA ROTINA SOBRE ISSO)
 	if (!msg.guild) return;

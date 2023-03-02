@@ -1,6 +1,7 @@
 {
   "discord": {
-    "bot_token": "INSIRA AQUI"
+    "bot_token": "INSIRA AQUI",
+	"bot_ignore": "0"
   },
   "openai": {
     "api_key": "INSIRA AQUI",
