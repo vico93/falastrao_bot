@@ -41,7 +41,7 @@ async function openai_reply(user_id, username, message) {
 	}
 	let username_fixed = username.replace(/ /g,"_");
 	const completion = await openai.createChatCompletion({
-	  model: "gpt-3.5-turbo",
+	  model: "gpt-3.5-turbo-0301", // ALTERAR NO FIM DE MAIO!!!
 	  messages: [
 		{role: "assistant", content: last_message},
 		{role: "system", content: config.openai.context},
