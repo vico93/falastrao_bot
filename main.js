@@ -59,8 +59,8 @@ client.on('ready', () => {
 });
 
 client.on('messageCreate', async (msg) => {
-	// Caso o autor seja um bot (ele mesmo incluído) EXCETO o quebra-gelo não faz nada
-	if (msg.author.bot && msg.author.id !== config.discord.bot_ignore) return;
+	// Caso o autor seja um bot (ele mesmo incluído) não faz nada
+	if (msg.author.bot) return;
 	
 	// Caso a mensagem venha por DM (IMPLEMENTAR POSTERIORMENTE ALGUMA ROTINA SOBRE ISSO)
 	if (!msg.guild) return;
@@ -68,10 +68,14 @@ client.on('messageCreate', async (msg) => {
 	// Responde a mensagem se ele for mencionado (e se for uma resposta com ping?)
 	if (msg.mentions.has(client.user.id))
 	{
-		msg.channel.sendTyping(); // Inicie a simulação de digitação
-		let response = "";
-		response = await openai_reply(msg.author.id, msg.author.username, msg.cleanContent.replace('@everyone', '').replace('@here', '').replace(/@/g, ""));
-		msg.reply(response);
+		// Verifica se a menção não inclui somente ou @everyone ou @here
+		if (!(msg.mentions.everyone && !msg.mentions.users.size && !msg.mentions.roles.size))
+		{
+			msg.channel.sendTyping(); // Inicie a simulação de digitação
+			let response = "";
+			response = await openai_reply(msg.author.id, msg.author.username, msg.cleanContent.replace(/@/g, ""));
+			msg.reply(response);
+		}
 	}
 });
 
