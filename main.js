@@ -41,7 +41,7 @@ async function openai_reply(user_id, username, message) {
 	}
 	let username_fixed = username.replace(/ /g,"_");
 	const completion = await openai.createChatCompletion({
-	  model: "gpt-3.5-turbo",
+	  model: "gpt-4",
 	  messages: [
 		{role: "assistant", content: last_message},
 		{role: "system", content: config.openai.context},
@@ -73,7 +73,7 @@ client.on('messageCreate', async (msg) => {
 		{
 			msg.channel.sendTyping(); // Inicie a simulação de digitação
 			let response = "";
-			response = await openai_reply(msg.author.id, msg.author.username, msg.cleanContent.replace(/@/g, ""));
+			response = await openai_reply(msg.author.id, msg.author.displayName, msg.cleanContent.replace(/@/g, ""));
 			msg.reply(response);
 		}
 	}
