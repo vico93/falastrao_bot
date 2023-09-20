@@ -73,7 +73,7 @@ client.on('messageCreate', async (msg) => {
 		{
 			msg.channel.sendTyping(); // Inicie a simulação de digitação
 			let response = "";
-			response = await openai_reply(msg.author.id, msg.author.displayName, msg.cleanContent.replace(/@/g, ""));
+			response = await openai_reply(msg.author.id, msg.member.displayName, msg.cleanContent.replace(/@/g, ""));
 			msg.reply(response);
 		}
 	}
