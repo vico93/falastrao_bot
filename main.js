@@ -22,6 +22,7 @@ const client = new Client({
 });
 const configuration = new Configuration({
 	apiKey: config.openai.api_key,
+	baseURL: config.openai.base_url,
 });
 const openai = new OpenAIApi(configuration);
 // Armazenará a última resposta do bot para cada usuário (independentemente do canal)
@@ -41,7 +42,7 @@ async function openai_reply(user_id, username, message) {
 	}
 	let username_fixed = username.replace(/ /g,"_");
 	const completion = await openai.createChatCompletion({
-	  model: "gpt-4",
+	  model: config.openai.model,
 	  messages: [
 		{role: "assistant", content: last_message},
 		{role: "system", content: config.openai.context},
