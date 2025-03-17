@@ -7,11 +7,11 @@
 */
 
 /* ---------------- DECLARAÇÕES ---------------- */
-const { Client, GatewayIntentBits, Collection } = require('discord.js');
+import { Client, GatewayIntentBits, Collection } from 'discord.js';
 import OpenAI from 'openai';
 
 /* ----------------- VARIÁVEIS ----------------- */
-const config = require('./config.json');
+import config from './config.json' with { type: 'json' };
 const client = new Client({
 	intents: [
 		GatewayIntentBits.Guilds,
@@ -31,28 +31,35 @@ const last_messages = new Collection();
 /* ------------------ FUNÇÕES ------------------ */
 // Função para enviar uma pergunta ao GPTGPT e obter uma resposta
 async function openai_reply(user_id, username, message) {
-	let last_message = "";
-	if (last_messages.has(user_id))
-	{
-		last_message = last_messages.get(user_id)
-	}
-	else
-	{
-		last_message = "Esta é a primeira conversa com " + username;
-	}
-	let username_fixed = username.replace(/ /g,"_");
-	const completion = await client.chat.completions.create({
-	  model: config.openai.model,
-	  messages: [
-		{ role: 'assistant', content: last_message},
-		{ role: 'developer', content: config.openai.context },
-		{ role: 'user', name: username_fixed, content: message },
-	  ],
-	});
-	last_messages.set(user_id, completion.data.choices[0].message.content);
-	// console.log(last_messages);
-	return completion.choices[0].message.content;
+    let last_message = last_messages.get(user_id) || "Esta é a primeira conversa com " + username;
+    let username_fixed = username.replace(/ /g, "_");
+
+    try {
+        const completion = await openai.chat.completions.create({
+            model: config.openai.model,
+            messages: [
+                { role: 'assistant', content: last_message },
+                { role: 'developer', content: config.openai.context },
+                { role: 'user', name: username_fixed, content: message },
+            ],
+        });
+
+        // console.log("Resposta da OpenAI:", completion); // <-- Log para depuração
+
+        if (!completion || !completion.choices || completion.choices.length === 0) {
+            console.error("Resposta inesperada da API OpenAI (ou compatível):", completion);
+            return "Erro ao processar resposta da API OpenAI (ou compatível).";
+        }
+
+        last_messages.set(user_id, completion.choices[0].message.content);
+        return completion.choices[0].message.content;
+
+    } catch (error) {
+        console.error("Erro na requisição para API OpenAI (ou compatível):", error);
+        return "Ocorreu um erro ao se comunicar com a API OpenAI (ou compatível).";
+    }
 }
+
 
 /* ----------------- CALLBACKS ----------------- */
 client.on('ready', () => {
