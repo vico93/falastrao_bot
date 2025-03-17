@@ -8,7 +8,7 @@
 
 /* ---------------- DECLARAÇÕES ---------------- */
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
-const { Configuration, OpenAIApi } = require("openai");
+import OpenAI from 'openai';
 
 /* ----------------- VARIÁVEIS ----------------- */
 const config = require('./config.json');
@@ -20,11 +20,11 @@ const client = new Client({
 		GatewayIntentBits.GuildMembers,
 	]
 });
-const configuration = new Configuration({
+const openai = new OpenAI({
 	apiKey: config.openai.api_key,
 	baseURL: config.openai.base_url,
 });
-const openai = new OpenAIApi(configuration);
+
 // Armazenará a última resposta do bot para cada usuário (independentemente do canal)
 const last_messages = new Collection();
 
@@ -41,17 +41,17 @@ async function openai_reply(user_id, username, message) {
 		last_message = "Esta é a primeira conversa com " + username;
 	}
 	let username_fixed = username.replace(/ /g,"_");
-	const completion = await openai.createChatCompletion({
+	const completion = await client.chat.completions.create({
 	  model: config.openai.model,
 	  messages: [
-		{role: "assistant", content: last_message},
-		{role: "system", content: config.openai.context},
-		{role: "user", name: username_fixed, content: message}
-	],
+		{ role: 'assistant', content: last_message},
+		{ role: 'developer', content: config.openai.context },
+		{ role: 'user', name: username_fixed, content: message },
+	  ],
 	});
 	last_messages.set(user_id, completion.data.choices[0].message.content);
 	// console.log(last_messages);
-	return completion.data.choices[0].message;
+	return completion.choices[0].message.content;
 }
 
 /* ----------------- CALLBACKS ----------------- */
