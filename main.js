@@ -28,6 +28,16 @@ const openai = new OpenAI({
 // Armazenará a última resposta do bot para cada usuário (independentemente do canal)
 const last_messages = new Collection();
 
+/* ----------------- FUNÇÕES AUXILIARES ----------------- */
+// Função para dividir mensagens longas em partes de no máximo 2000 caracteres
+function splitMessage(message, maxLength = 2000) {
+	const parts = [];
+	for (let i = 0; i < message.length; i += maxLength) {
+		parts.push(message.substring(i, i + maxLength));
+	}
+	return parts;
+}
+
 /* ------------------ FUNÇÕES ------------------ */
 // Função para enviar uma pergunta ao GPTGPT e obter uma resposta
 async function openai_reply(user_id, username, message) {
@@ -80,9 +90,19 @@ client.on('messageCreate', async (msg) => {
 		if (!(msg.mentions.everyone && !msg.mentions.users.size && !msg.mentions.roles.size))
 		{
 			msg.channel.sendTyping(); // Inicie a simulação de digitação
-			let response = "";
-			response = await openai_reply(msg.author.id, msg.member.displayName, msg.cleanContent.replace(/@/g, ""));
-			msg.reply(response);
+			let response = await openai_reply(msg.author.id, msg.member.displayName, msg.cleanContent.replace(/@/g, ""));
+			
+			// Verifica se a resposta ultrapassa o limite de 2000 caracteres
+			if (response.length > 2000) {
+				const parts = splitMessage(response);
+				// Envia a primeira parte como resposta e as demais como mensagens adicionais
+				await msg.reply(parts[0]);
+				for (let i = 1; i < parts.length; i++) {
+					await msg.channel.send(parts[i]);
+				}
+			} else {
+				await msg.reply(response);
+			}
 		}
 	}
 });
