@@ -40,7 +40,7 @@ function splitMessage(message, maxLength = 2000) {
 
 /* ------------------ FUNÇÕES ------------------ */
 // Função para enviar uma pergunta ao GPTGPT e obter uma resposta
-async function openai_reply(user_id, username, message) {
+async function openai_reply(user_id, username, message, attached_image) {
     let last_message = last_messages.get(user_id) || "Esta é a primeira conversa com " + username;
     let username_fixed = username.replace(/ /g, "_");
 
@@ -49,8 +49,26 @@ async function openai_reply(user_id, username, message) {
             model: config.openai.model,
             messages: [
                 { role: 'assistant', content: last_message },
-                { role: 'developer', content: config.openai.context },
-                { role: 'user', name: username_fixed, content: message },
+                { role: 'system', content: config.openai.context },
+                attached_image ? 
+				{
+					role: "user",
+					name: username_fixed,
+					content: [
+						{ type: "text", text: message },
+						{
+							type: "image_url",
+							image_url: {
+								url: attached_image,
+							},
+						},
+					],
+				} : 
+				{ 
+					role: 'user', 
+					name: username_fixed, 
+					content: message 
+				}
             ],
         });
 
@@ -90,7 +108,17 @@ client.on('messageCreate', async (msg) => {
 		if (!(msg.mentions.everyone && !msg.mentions.users.size && !msg.mentions.roles.size))
 		{
 			msg.channel.sendTyping(); // Inicie a simulação de digitação
-			let response = await openai_reply(msg.author.id, msg.member.displayName, msg.cleanContent.replace(/@/g, ""));
+			if (msg.attachments.size > 0)
+			{
+				if (msg.attachments.first().contentType.startsWith('image/'))
+				{
+					let response = await openai_reply(msg.author.id, msg.member.displayName, msg.cleanContent.replace(/@/g, ""), msg.attachments.first().url);
+				}
+			}
+			else
+			{
+				let response = await openai_reply(msg.author.id, msg.member.displayName, msg.cleanContent.replace(/@/g, ""), "");
+			}
 			
 			// Verifica se a resposta ultrapassa o limite de 2000 caracteres
 			if (response.length > 2000) {
