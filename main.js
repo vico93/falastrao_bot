@@ -39,34 +39,37 @@ function splitMessage(message, maxLength = 2000) {
 }
 
 /* ------------------ FUNÇÕES ------------------ */
-// Função para enviar uma pergunta ao GPTGPT e obter uma resposta usando a Responses API
+// Função para enviar uma pergunta ao GPTGPT e obter uma resposta
 async function openai_reply(user_id, username, message) {
-    // Recupera o response_id anterior do usuário, se existir (caso contrário, null para a primeira interação)
-    let previous_response_id = last_messages.get(user_id) || null;
+    let last_message = last_messages.get(user_id) || "Esta é a primeira conversa com " + username;
     let username_fixed = username.replace(/ /g, "_");
 
     try {
-        const response = await openai.responses.create({
+        const completion = await openai.chat.completions.create({
             model: config.openai.model,
-            input: message,
-            previous_response_id: previous_response_id,
+            messages: [
+                { role: 'assistant', content: last_message },
+                { role: 'developer', content: config.openai.context },
+                { role: 'user', name: username_fixed, content: message },
+            ],
         });
 
-        // Verifica se a resposta contém os dados esperados
-        if (!response || !response.output || response.output.length === 0) {
-            console.error("Resposta inesperada da API OpenAI (ou compatível):", response);
+        // console.log("Resposta da OpenAI:", completion); // <-- Log para depuração
+
+        if (!completion || !completion.choices || completion.choices.length === 0) {
+            console.error("Resposta inesperada da API OpenAI (ou compatível):", completion);
             return "Erro ao processar resposta da API OpenAI (ou compatível).";
         }
 
-        // Armazena o novo response_id para manter o contexto da conversa
-        last_messages.set(user_id, response.id);
-        return response.output[0].content[0].text;
+        last_messages.set(user_id, completion.choices[0].message.content);
+        return completion.choices[0].message.content;
 
     } catch (error) {
         console.error("Erro na requisição para API OpenAI (ou compatível):", error);
         return "Ocorreu um erro ao se comunicar com a API OpenAI (ou compatível).";
     }
 }
+
 
 /* ----------------- CALLBACKS ----------------- */
 client.on('ready', () => {
