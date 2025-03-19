@@ -40,16 +40,16 @@ function splitMessage(message, maxLength = 2000) {
 
 /* ------------------ FUNÇÕES ------------------ */
 // Função para enviar uma pergunta ao GPTGPT e obter uma resposta
-async function openai_reply(user_id, username, message, attached_image) {
-    let last_message = last_messages.get(user_id) || "Esta é a primeira conversa com " + username;
-    let username_fixed = username.replace(/ /g, "_");
+async function openai_reply(user_id, username, message, attached_image, systemContext = config.openai.context) {
+	let username_fixed = username.replace(/ /g, "_");
+    let last_message = last_messages.get(user_id) || "Esta é a primeira conversa com " + username_fixed;
 
     try {
         const completion = await openai.chat.completions.create({
             model: config.openai.model,
             messages: [
                 { role: 'assistant', content: last_message },
-                { role: 'system', content: config.openai.context },
+                { role: 'system', content: systemContext },
                 attached_image ? 
 				{
 					role: "user",
@@ -108,17 +108,31 @@ client.on('messageCreate', async (msg) => {
 		if (!(msg.mentions.everyone && !msg.mentions.users.size && !msg.mentions.roles.size))
 		{
 			msg.channel.sendTyping(); // Inicie a simulação de digitação
+			let systemContext = config.openai.context;
+			
+			// Check if message is a reply to bot's message
+            if (msg.reference) {
+                try {
+                    const referencedMessage = await msg.channel.messages.fetch(msg.reference.messageId);
+                    if (referencedMessage.author.id === client.user.id) {
+                        systemContext += ` ${msg.member.displayName} está respondendo a sua mensagem anterior: "${referencedMessage.cleanContent.replace(/@/g, "")}". Considere essa mensagem também junto com a sua anterior para melhor contextualização.`;
+                    }
+                } catch (error) {
+                    console.error('Error fetching referenced message:', error);
+                }
+            }
+			
 			let response;
 			if (msg.attachments.size > 0)
 			{
 				if (msg.attachments.first().contentType.startsWith('image/'))
 				{
-					response = await openai_reply(msg.author.id, msg.member.displayName, msg.cleanContent.replace(/@/g, ""), msg.attachments.first().url);
+					response = await openai_reply(msg.author.id, msg.member.displayName, msg.cleanContent.replace(/@/g, ""), msg.attachments.first().url, systemContext);
 				}
 			}
 			else
 			{
-				response = await openai_reply(msg.author.id, msg.member.displayName, msg.cleanContent.replace(/@/g, ""), "");
+				response = await openai_reply(msg.author.id, msg.member.displayName, msg.cleanContent.replace(/@/g, ""), "", systemContext);
 			}
 			
 			// Verifica se a resposta ultrapassa o limite de 2000 caracteres
