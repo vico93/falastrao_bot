@@ -108,16 +108,17 @@ client.on('messageCreate', async (msg) => {
 		if (!(msg.mentions.everyone && !msg.mentions.users.size && !msg.mentions.roles.size))
 		{
 			msg.channel.sendTyping(); // Inicie a simulação de digitação
+			let response;
 			if (msg.attachments.size > 0)
 			{
 				if (msg.attachments.first().contentType.startsWith('image/'))
 				{
-					let response = await openai_reply(msg.author.id, msg.member.displayName, msg.cleanContent.replace(/@/g, ""), msg.attachments.first().url);
+					response = await openai_reply(msg.author.id, msg.member.displayName, msg.cleanContent.replace(/@/g, ""), msg.attachments.first().url);
 				}
 			}
 			else
 			{
-				let response = await openai_reply(msg.author.id, msg.member.displayName, msg.cleanContent.replace(/@/g, ""), "");
+				response = await openai_reply(msg.author.id, msg.member.displayName, msg.cleanContent.replace(/@/g, ""), "");
 			}
 			
 			// Verifica se a resposta ultrapassa o limite de 2000 caracteres
