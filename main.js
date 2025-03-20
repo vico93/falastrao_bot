@@ -112,16 +112,15 @@ client.on('messageCreate', async (msg) => {
 		let replyPrefix = ""; // Para menção caso a resposta seja direcionada a outro usuário
 
 		if (msg.reference) {
-			// Se for uma resposta, busca a mensagem referenciada
 			try {
 				const referencedMessage = await msg.channel.messages.fetch(msg.reference.messageId);
-				// Utiliza cleanContent que já trata as menções de forma legível
+				// Utiliza toString() para obter a menção completa do autor
+				const referencedMention = referencedMessage.author.toString();
 				if (referencedMessage.author.id === client.user.id) {
 					extraContext = ` ${msg.member.displayName} está respondendo à mensagem anterior do bot: "${referencedMessage.cleanContent}".`;
 				} else {
-					extraContext = ` ${msg.member.displayName} está respondendo à mensagem de ${referencedMessage.member.displayName}: "${referencedMessage.cleanContent}".`;
-					// Mantém a menção real para notificar o usuário
-					replyPrefix = `<@${referencedMessage.author.id}> `;
+					extraContext = ` ${msg.member.displayName} está respondendo à mensagem de ${referencedMention}: "${referencedMessage.cleanContent}".`;
+					replyPrefix = `${referencedMention} `;
 				}
 			} catch (error) {
 				console.error('Erro ao buscar a mensagem referenciada:', error);
