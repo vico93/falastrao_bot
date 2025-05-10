@@ -58,6 +58,10 @@ async function openai_reply(user_id, username, message, attached_image, systemCo
 	// Usamos displayName para o contexto enviado à API
 	let username_fixed = username.replace(/ /g, "_");
 
+	const currentDateTime = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' }).replace(',', ', e são');
+	// console.log(currentDateTime); // Para debug
+	systemContext += ` Hoje é dia ${currentDateTime}, fuso horário UTC-3 (Horário de Brasília).`;
+
     try {
         const completion = await openai.chat.completions.create({
             model: config.openai.model,
