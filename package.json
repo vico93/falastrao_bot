@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/vico93/falastrao_bot#readme",
   "dependencies": {
-    "discord.js": "^14.12.1",
+    "discord.js": "^14.21.0",
     "openai": "^4.28.0"
   }
 }
